@@ -1,0 +1,63 @@
+<link rel="stylesheet" href="/global.css">
+<link rel="stylesheet" href="/panel.css">
+
+<script>
+    const port = <%= _port %>;
+    const password = "<%= _password %>";
+    const ws = new WebSocket("ws://localhost:" + port);
+    ws.onmessage = (e) => {
+        console.log(JSON.parse(e.data));
+        const data = JSON.parse(e.data);
+        if (data.type === "INITIAL") {
+            let html = "";
+            data.messages.map((m) => {
+                html += `<div>
+                        <span>${m.time}</span>
+                        <span style="color: ${GetColor(m.type)}">${m.type}</span>
+                        <span>${m.message}</span>
+                    </div>`
+            })
+            document.getElementById("console").innerHTML += html
+        } else if (data.type === "NEW") {
+
+            document.getElementById("console").innerHTML += `<div>
+                        <span>${data.data.time}</span>
+                        <span style="color: ${GetColor(data.data.type)}">${data.data.type}</span>
+                        <span>${data.data.message}</span>
+                    </div>`
+        }
+    };
+    ws.onopen = (socket) => {
+        // socket.send();
+        console.log(socket)
+        ws.send(JSON.stringify({ password, route: "console" }))
+    }
+
+    function GetColor(type) {
+        let color = "#fff";
+        switch (type) {
+            case "[WARN]:":
+                color = "#f1c40f";
+                break
+            case "[INFO]:":
+                color = "#27ae60";
+                break
+            case "[ERROR]:":
+                color = "#e74c3c";
+                break
+            case "[FATAL]:":
+                color = "#9b59b6";
+                break
+            case "[DEBUG]:":
+                color = "#8e44ad";
+                break
+        }
+        return color
+    }
+</script>
+
+<div class="container">
+    <h1>Console</h1>
+    <div class="console" id="console"></div>
+</div>
+<%- include("./global/components/sidebar.ejs") %>

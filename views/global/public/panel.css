@@ -1,0 +1,9 @@
+.console {
+    width: calc(100% - 10px);
+    background-color: #222f3e;
+    padding: 5px;
+    border-radius: 5px;
+    height: 500px;
+    font-family: 'Courier New', Courier, monospace;
+    overflow: auto;
+}
