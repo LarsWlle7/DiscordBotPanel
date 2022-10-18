@@ -5,6 +5,13 @@ import http from "http";
 import { WSConsoleListener } from "./ws/console";
 import { MainRouter } from "./routers";
 import { logger } from "./managers/logger";
+import cors from "cors";
+import session from "express-session";
+import passport from "passport";
+import store from "connect-mongo";
+
+require("./strategies/discord");
+require("./database");
 
 const app = express();
 const server = http.createServer(app);
@@ -32,6 +39,22 @@ wss.on("connection", (socket) => {
 app.use(express.static(__dirname.replace("src", "").replace("dist", "") + "views/global/public"));
 app.set("view engine", "ejs");
 
+app.use(express.json());
+app.use(express.urlencoded());
+// app.use(cors({ origin: ["*"], credentials: true }));
+app.use(
+  session({
+    secret: config.session_store.secret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: config.session_store.cookie_max_age,
+    },
+    store: store.create({ mongoUrl: config.database }),
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 app.use("/", MainRouter);
 
 server.listen(config.port, () => {

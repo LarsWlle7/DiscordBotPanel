@@ -1,4 +1,18 @@
 {
   "port": 80,
-  "socketPassword": "mypassword"
+  "socketPassword": "",
+  "database": "",
+  "discord": {
+    "oauth": {
+      "client_id": "",
+      "secret": "",
+      "callback_url": "",
+      "redirect_url_on_unauthed": ""
+    },
+    "guildId": ""
+  },
+  "session_store": {
+    "secret": "",
+    "cookie_max_age": 43200000
+  }
 }

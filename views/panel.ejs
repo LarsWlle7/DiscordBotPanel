@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="/global.css">
 <link rel="stylesheet" href="/panel.css">
 
+<!-- Console/Websockets -->
 <script>
     const port = <%= _port %>;
     const password = "<%= _password %>";
@@ -10,23 +11,38 @@
         const data = JSON.parse(e.data);
         if (data.type === "INITIAL") {
             let html = "";
-            data.messages.map((m) => {
-                html += `<div>
+            data.messages.map((m, i) => {
+                const id = GetCustomID()
+                html += `<div id="${id}">
                         <span>${m.time}</span>
                         <span style="color: ${GetColor(m.type)}">${m.type}</span>
                         <span>${m.message}</span>
                     </div>`
+                if (i === data.messages.length + 1) document.getElementById(id).scrollIntoView();
             })
             document.getElementById("console").innerHTML += html
         } else if (data.type === "NEW") {
-
-            document.getElementById("console").innerHTML += `<div>
+            const id = GetCustomID()
+            document.getElementById("console").innerHTML += `<div id="${id}">
                         <span>${data.data.time}</span>
                         <span style="color: ${GetColor(data.data.type)}">${data.data.type}</span>
                         <span>${data.data.message}</span>
                     </div>`
+            document.getElementById(id).scrollIntoView();
         }
     };
+
+    function GetCustomID() {
+        var result = '';
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < 5; i++) {
+            result += characters.charAt(Math.floor(Math.random() *
+                charactersLength));
+        }
+        return result;
+    }
+
     ws.onopen = (socket) => {
         // socket.send();
         console.log(socket)
@@ -51,13 +67,43 @@
             case "[DEBUG]:":
                 color = "#8e44ad";
                 break
+            case "[DISCORD]:":
+                color = "#0abde3";
+                break
         }
         return color
     }
 </script>
 
+<!-- Start/Stop/Kill bot -->
+<script defer>
+    function onRequestStart() {
+        fetch(`http://localhost:${port - 1}/bot/request_start`, {
+            credentials: "include",
+            method: "GET"
+        })
+            .then(() => console.log("bot is online."))
+            .catch((err) => console.error(err))
+    }
+    function onRequestDestroy() {
+        fetch(`http://localhost:${port - 1}/bot/request_destroy`, {
+            credentials: "include",
+            method: "GET"
+        })
+            .then(() => console.log("bot is offline."))
+            .catch((err) => console.error(err))
+    }
+</script>
+
 <div class="container">
-    <h1>Console</h1>
+    <div class="dashboard-top">
+        <h1>Console</h1>
+        <div class="dashboard-buttons">
+            <button onclick="onRequestStart();" class="dashboard-button start">Start</button>
+            <button onclick="onRequestDestroy();" id="stop-bot" class="dashboard-button stop">Stop</button>
+            <button id="kill-bot" class="dashboard-button kill">Kill</button>
+        </div>
+    </div>
     <div class="console" id="console"></div>
 </div>
 <%- include("./global/components/sidebar.ejs") %>

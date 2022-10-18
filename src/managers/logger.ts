@@ -8,6 +8,7 @@ interface ILogger {
   error: (message: any, stopOnError: boolean) => void;
   fatal: (message: any, stopOnFatal: boolean) => void;
   debug: (message: any, origin: string) => void;
+  discord: (message: string, source: string) => void;
 }
 
 export const logger: ILogger = {
@@ -37,6 +38,11 @@ export const logger: ILogger = {
     const Time = getTime();
     Events.emit("console_message", getFormattedTime(), "[DEBUG]:", message);
     stdout.write(`${Time} ${chalk.bgMagentaBright(`[DEBUG]:`)} ${chalk.cyan(`[${origin}]:`)} ${message}\n`);
+  },
+  discord: (message: string, source: string) => {
+    const Time = getTime();
+    Events.emit("console_message", getFormattedTime(), "[DISCORD]:", message);
+    stdout.write(`${Time} ${chalk.blueBright(`[DISCORD]:`)} ${chalk.cyan(`[${source}]:`)} ${message}\n`);
   },
 };
 

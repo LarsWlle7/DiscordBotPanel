@@ -52,6 +52,10 @@ main {
     transition: all 0.15s linear;
     cursor: pointer;
 }
+.nav-item {
+    color: white;
+    text-decoration: none;
+}
 .menu ul li:hover {
     background-color: rgba(0,0,0,0.1);
 }

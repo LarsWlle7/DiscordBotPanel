@@ -5,7 +5,7 @@ import { validateAuthentication } from "../../middleware/authentication";
 const router = Router();
 
 router.get("/", validateAuthentication, (_, res) => {
-  res.render("panel", { _port: config.port + 1, _password: config.socketPassword });
+  res.render("settings", { _port: config.port + 1, _password: config.socketPassword });
 });
 
-export { router as DashboardRouter };
+export { router as SettingsRouter };

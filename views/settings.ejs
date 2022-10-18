@@ -1,0 +1,27 @@
+<link rel="stylesheet" href="/global.css">
+<link rel="stylesheet" href="/settings.css">
+
+<script>
+    const port = <%= _port %>;
+    function ChangeBotToken() {
+        fetch(`http://localhost:${port - 1}/bot/request_token_change`, {
+            credentials: "include",
+            method: "PUT",
+            headers: {
+                newtoken: document.getElementById("BotTokenInput").value
+            }
+        })
+            .then(() => console.log("changed."))
+            .catch((err) => console.error(err))
+    }
+</script>
+
+<main class="container">
+    <div class="form-input">
+        <label for="BotToken">Bot token</label>
+        <input type="password" class="input" id="BotTokenInput" placeholder="Discord Bot Token">
+        <button class="BotToken" onclick="ChangeBotToken();">Submit</button>
+    </div>
+</main>
+
+<%- include("./global/components/sidebar.ejs") %>
